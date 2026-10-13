@@ -88,9 +88,9 @@ public:
 
             if (!title.empty() && !strRating.empty()) {
                 double rating = std::stod(strRating);
-                double energy = (genre.find("Action") != std::string::npos || genre.find("Thriller") != std::string::npos) ? 0.9 : 0.3;
-                double valence = (genre.find("Comedy") != std::string::npos || genre.find("Animation") != std::string::npos) ? 0.9 : 0.2;
-                double suspense = (genre.find("Horror") != std::string::npos || genre.find("Mystery") != std::string::npos) ? 0.9 : 0.1;
+                double energy = (genre.find("Action") != string::npos || genre.find("Thriller") != string::npos) ? 0.9 : 0.3;
+                double valence = (genre.find("Comedy") != string::npos || genre.find("Animation") != string::npos) ? 0.9 : 0.2;
+                double suspense = (genre.find("Horror") != string::npos || genre.find("Mystery") != string::npos) ? 0.9 : 0.1;
 
                 movies.emplace_back(title, genre, rating, FeatureVector({energy, valence, suspense}));
             }
