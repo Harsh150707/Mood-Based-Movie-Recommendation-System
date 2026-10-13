@@ -5,13 +5,13 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
-
+using namespace std;
 class FeatureVector {
 private:
-    std::vector<double> values;
+    vector<double> values;
 public:
     FeatureVector() = default;
-    FeatureVector(const std::vector<double>& vals) : values(vals) {}
+    FeatureVector(const vector<double>& vals) : values(vals) {}
 
     double distanceTo(const FeatureVector& other) const {
         double sum = 0.0;
@@ -19,48 +19,48 @@ public:
             double diff = values[i] - other.values[i];
             sum += diff * diff;
         }
-        return std::sqrt(sum);
+        return sqrt(sum);
     }
 };
 
 class Movie {
 private:
-    std::string title;
-    std::string genre;
+    string title;
+    string genre;
     double rating;
     FeatureVector features;
 
 public:
-    Movie(std::string t, std::string g, double r, FeatureVector f)
+    Movie(string t, string g, double r, FeatureVector f)
         : title(t), genre(g), rating(r), features(f) {}
 
-    std::string getTitle() const { return title; }
-    std::string getGenre() const { return genre; }
+    string getTitle() const { return title; }
+    string getGenre() const { return genre; }
     double getRating() const { return rating; }
     const FeatureVector& getFeatures() const { return features; }
 };
 
 class KNNClassifier {
 private:
-    std::vector<Movie> trainingData;
+    vector<Movie> trainingData;
     int k;
 
 public:
     explicit KNNClassifier(int kNeighbors = 3) : k(kNeighbors) {}
 
-    void fit(const std::vector<Movie>& data) { trainingData = data; }
+    void fit(const vector<Movie>& data) { trainingData = data; }
 
-    std::vector<Movie> predict(const FeatureVector& inputFeatures) {
-        std::vector<std::pair<double, size_t>> distances;
+    vector<Movie> predict(const FeatureVector& inputFeatures) {
+        vector<pair<double, size_t>> distances;
         for (size_t i = 0; i < trainingData.size(); ++i) {
             double dist = inputFeatures.distanceTo(trainingData[i].getFeatures());
             distances.push_back({dist, i});
         }
 
-        std::sort(distances.begin(), distances.end());
+        sort(distances.begin(), distances.end());
 
-        std::vector<Movie> results;
-        int count = std::min(k, static_cast<int>(distances.size()));
+        vector<Movie> results;
+        int count = min(k, static_cast<int>(distances.size()));
         for (int i = 0; i < count; ++i) {
             results.push_back(trainingData[distances[i].second]);
         }
@@ -70,21 +70,21 @@ public:
 
 class KaggleCSVLoader {
 public:
-    static std::vector<Movie> load(const std::string& filepath) {
-        std::vector<Movie> movies;
-        std::ifstream file(filepath);
+    static vector<Movie> load(const string& filepath) {
+        vector<Movie> movies;
+        ifstream file(filepath);
         if (!file.is_open()) return movies;
 
-        std::string line;
-        std::getline(file, line); // Skip header
+        string line;
+        getline(file, line); // Skip header
 
         while (std::getline(file, line)) {
-            std::stringstream ss(line);
-            std::string title, genre, strRating;
+            stringstream ss(line);
+            string title, genre, strRating;
 
-            std::getline(ss, title, ',');
-            std::getline(ss, genre, ',');
-            std::getline(ss, strRating, ',');
+            getline(ss, title, ',');
+            getline(ss, genre, ',');
+            getline(ss, strRating, ',');
 
             if (!title.empty() && !strRating.empty()) {
                 double rating = std::stod(strRating);
@@ -102,23 +102,23 @@ public:
 int main(int argc, char* argv[]) {
     if (argc < 4) return 1;
 
-    double energy = std::stod(argv[1]);
-    double valence = std::stod(argv[2]);
-    double suspense = std::stod(argv[3]);
+    double energy = stod(argv[1]);
+    double valence = stod(argv[2]);
+    double suspense = stod(argv[3]);
 
     FeatureVector userMood({energy, valence, suspense});
 
     // 1. Load Inventory File
-    std::vector<Movie> dataset = KaggleCSVLoader::load("movies.csv");
+    vector<Movie> dataset = KaggleCSVLoader::load("movies.csv");
 
     // 2. Train and Predict using OOP Model
     KNNClassifier model(3);
     model.fit(dataset);
-    std::vector<Movie> recommendations = model.predict(userMood);
+    vector<Movie> recommendations = model.predict(userMood);
 
     // 3. Output Delimited Format for UI Parsing (Title|Genre|Rating)
     for (const auto& movie : recommendations) {
-        std::cout << movie.getTitle() << "|" << movie.getGenre() << "|" << movie.getRating() << "\n";
+        cout << movie.getTitle() << "|" << movie.getGenre() << "|" << movie.getRating() << "\n";
     }
 
     return 0;
