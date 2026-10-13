@@ -11,7 +11,7 @@ class FeatureVector {
 private:
     vector<double> values;
 public:
-    FeatureVector() = default;
+    FeatureVector(){};
     FeatureVector(const vector<double>& vals) : values(vals) {}
 
     double distanceTo(const FeatureVector& other) const {
